@@ -173,7 +173,7 @@ const InvoiceScreen = ({
 
 InvoiceScreen.navigationOptions = () => ({
   title: "Invoices",
-  headerBackTitle: ' ',
+  headerBackTitle: '',
 });
 
 const styles = {

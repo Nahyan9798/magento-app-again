@@ -58,8 +58,8 @@ const Account = ({
   
   
       const getInsiderData = async () =>{
-    const loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id");
-
+    let loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id");
+          console.log(loyaltyid.value)
         const response = await fetch('https://totaltools-xi.prontohosted.com.au/pronto/rest/internal/api/GetMember', {
     method: 'POST',
     headers: {
@@ -67,7 +67,7 @@ const Account = ({
       'Content-Type': "application/json",
       'x-pronto-token': "balance:*:7fc966b1e11433d976c9b43c2eac2b7de13b8946f7c210352fcad59ea34ecc3427a71b3f800e36cf5990075027d0944face261d39460413582754e3b5198e045:251c5834f45d130da550a15695dc075db19fd0d30be4a0b9",
     },
-    body: '<?xml version="1.0"?><GetMemberRequest><Parameters><LoyaltyID>448971</LoyaltyID></Parameters></GetMemberRequest>',
+    body: `<?xml version="1.0"?><GetMemberRequest><Parameters><LoyaltyID>${loyaltyid.value}</LoyaltyID></Parameters></GetMemberRequest>`,
   });
   const responseText = await response.text();
   var XMLParser = require('react-xml-parser');
@@ -93,7 +93,7 @@ const Account = ({
   settier(tier);
   setspendtonext(spendtonext);
   setinsiderdollar(insiderdollars);
-setspendtoretain(spendtoretain);
+  setspendtoretain(spendtoretain);
   setspend(spend);
   setexpiry(pointexpiry);
 }

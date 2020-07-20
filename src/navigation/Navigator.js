@@ -111,7 +111,7 @@ const authStack = createStackNavigator({
   [routes.NAVIGATION_AUTH_STACK_PATH]: Account,
 }, {navigationOptions: defaultHeader});
 
-const AccountSwitch = createSwitchNavigator({
+const AccountSwitch = createStackNavigator({
   [routes.NAVIGATION_AUTH_LOADING_SWITCH]: AuthLoading,
   [routes.NAVIGATION_LOGIN_STACK_PATH]: AuthStack,
   [routes.NAVIGATION_ACCOUNT_STACK_PATH]: AccountStack,
