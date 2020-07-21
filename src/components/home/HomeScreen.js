@@ -16,6 +16,7 @@ import FeaturedProducts from './FeaturedProducts';
 import NavigationService from '../../navigation/NavigationService';
 import { ThemeContext, theme } from '../../theme';
 import { translate } from '../../i18n';
+import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ContactScreen from './contactScreen';
 

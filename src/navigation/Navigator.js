@@ -64,9 +64,8 @@ const HomeStack = createStackNavigator(
     [routes.NAVIGATION_CATEGORY_PATH]: Category,
     [routes.NAVIGATION_HOME_PRODUCT_PATH]: Product,
     [routes.NAVIGATION_CONTACT_PATH]: Contact,
-    [routes.NAVIGATION_STORE_PATH]: Store,
-    [routes.NAVIGATION_ACCOUNT_PATH]:Account,
-    [routes.NAVIGATION_LOGIN_PATH]:Login,
+   
+    
   // [routes.NAVIGATION_AUTH_STACK_PATH]: AccountSwitch,
   //[routes.NAVIGATION_AUTH_LOADING_SWITCH]: AuthLoading,
   // [routes.NAVIGATION_ACCOUNT_STACK_PATH]: AccountStack,
@@ -101,20 +100,20 @@ const StoreStack = createStackNavigator({
 
 const InfoStack = createStackNavigator({
   [routes.NAVIGATION_INFO_SCREEN_PATH]: InfoScreen,
-  [routes.NAVIGATION_AUTH_STACK_PATH]: Account,
-  [routes.NAVIGATION_AUTH_LOADING_SWITCH]: AuthLoading,
+  //  [routes.NAVIGATION_ACCOUNT_STACK_PATH]: AccountStack,
+  [routes.NAVIGATION_AUTH_STACK_PATH]: AccountSwitch,
+  // [routes.NAVIGATION_AUTH_LOADING_SWITCH]: AuthLoading,
 }, {
   initialRouteName: routes.NAVIGATION_INFO_SCREEN_PATH,
   navigationOptions: defaultHeader});
 
-const authStack = createStackNavigator({
-  [routes.NAVIGATION_AUTH_STACK_PATH]: Account,
-}, {navigationOptions: defaultHeader});
 
-const AccountSwitch = createStackNavigator({
+
+const AccountSwitch = createSwitchNavigator({
   [routes.NAVIGATION_AUTH_LOADING_SWITCH]: AuthLoading,
   [routes.NAVIGATION_LOGIN_STACK_PATH]: AuthStack,
-  [routes.NAVIGATION_ACCOUNT_STACK_PATH]: AccountStack,
+  [routes.NAVIGATION_AUTH_STACK_PATH]: Account,
+
   
 });
 
@@ -211,7 +210,7 @@ const Nav = createStackNavigator({
     screen: MainAppNavigator,
     navigationOptions: { header: null },
   },
-  [routes.NAVIGATION_AUTH_STACK_PATH]:{ screen:AccountSwitch,  navigationOptions: { header: null },},
+  // [routes.NAVIGATION_AUTH_STACK_PATH]:{ screen:AccountSwitch,  navigationOptions: { header: null },},
   [routes.NAVIGATION_CHECKOUT_PATH]: Checkout,
 }, {
   headerBackTitleVisible: false,

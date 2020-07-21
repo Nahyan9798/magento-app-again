@@ -60,7 +60,7 @@ const Account = ({
       const getInsiderData = async () =>{
     let loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id");
           console.log(loyaltyid.value)
-        const response = await fetch('https://totaltools-xi.prontohosted.com.au/pronto/rest/internal/api/GetMember', {
+        const response = await fetch('https://totaltools-xi-test-03.prontohosted.com.au/pronto/rest/internalUAT/api/GetMember', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
