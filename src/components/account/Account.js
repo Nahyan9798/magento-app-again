@@ -58,7 +58,7 @@ const Account = ({
   
   
       const getInsiderData = async () =>{
-    let loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id");
+    const loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id");
           console.log(loyaltyid.value)
         const response = await fetch('https://totaltools-xi-test-03.prontohosted.com.au/pronto/rest/internalUAT/api/GetMember', {
     method: 'POST',
@@ -96,7 +96,7 @@ const Account = ({
   setspendtoretain(spendtoretain);
   setspend(spend);
   setexpiry(pointexpiry);
-}
+  }
  
 
   // const renderData= () =>{
@@ -116,7 +116,7 @@ const Account = ({
   // }
 
   const onLogoutPress = () => {
-    navigation.navigate(NAVIGATION_LOGIN_STACK_PATH);
+     navigation.navigate(NAVIGATION_LOGIN_STACK_PATH);
     _logout();
    
   };
@@ -254,19 +254,6 @@ const Account = ({
    };
    
    
-//   const insiderbasicInfo = (datafromInsider) => {
-
-//     //setdata([...data, {text:datafromInsider.value}])
-//     // let fname = datafromInsider.fname;
-//      //let lname = datafromInsider.lname;
-//      let name = datafromInsider
-// return (
-// <View>
-  
-// <Text>{name}</Text>
-// </View>
-// )
-// };
   
   return (
     <View style={styles.container(theme)}>

@@ -17,6 +17,7 @@ import {
 import { auth } from '../../actions/CustomerAuthActions';
 import {
   NAVIGATION_SIGNIN_PATH,
+  
   NAVIGATION_RESET_PASSWORD_PATH,
   NAVIGATION_ACCOUNT_PATH,
 } from '../../navigation/routes';
@@ -39,6 +40,7 @@ const Login = ({
 
   const onLoginPress = () => {
     _auth(email, password);
+   
   };
 
   const onSigninPress = () => {

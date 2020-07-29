@@ -2,12 +2,12 @@ import React, { useContext, useEffect } from 'react';
 import {
   View,
   StatusBar,
-  StyleSheet,
+  StyleSheet,ActivityIndicator
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Spinner } from '../common';
 import {
-  NAVIGATION_ACCOUNT_STACK_PATH,
+  NAVIGATION_AUTH_STACK_PATH,
   NAVIGATION_LOGIN_STACK_PATH,
 } from '../../navigation/routes';
 import { magento } from '../../magento';
@@ -28,7 +28,7 @@ const AuthLoading = (props) => {
 
       props.navigation.navigate(
         customerToken
-          ? NAVIGATION_ACCOUNT_STACK_PATH
+          ? NAVIGATION_AUTH_STACK_PATH
           : NAVIGATION_LOGIN_STACK_PATH,
       );
     } catch (e) {
@@ -40,7 +40,14 @@ const AuthLoading = (props) => {
 
   return (
     <View style={styles.container(theme)}>
-      <Spinner />
+      <ActivityIndicator
+            color='#0a1142'
+            size='large'
+            style={{
+              flex: 1,
+              justifyContent: 'center'
+            }}
+          />
       <StatusBar barStyle="default" />
     </View>
   );

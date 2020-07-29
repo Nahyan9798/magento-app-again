@@ -55,8 +55,8 @@ const AuthStack = createStackNavigator({
   [routes.NAVIGATION_SIGNIN_PATH]: Signin,
   [routes.NAVIGATION_RESET_PASSWORD_PATH]: PasswordReset,
 }, {
-  navigationOptions: defaultHeader,
-});
+  navigationOptions: {header: null}},
+);
 
 const HomeStack = createStackNavigator(
   {
@@ -64,12 +64,7 @@ const HomeStack = createStackNavigator(
     [routes.NAVIGATION_CATEGORY_PATH]: Category,
     [routes.NAVIGATION_HOME_PRODUCT_PATH]: Product,
     [routes.NAVIGATION_CONTACT_PATH]: Contact,
-   
-    
-  // [routes.NAVIGATION_AUTH_STACK_PATH]: AccountSwitch,
-  //[routes.NAVIGATION_AUTH_LOADING_SWITCH]: AuthLoading,
-  // [routes.NAVIGATION_ACCOUNT_STACK_PATH]: AccountStack,
-
+  
 
   },
   {
@@ -87,7 +82,7 @@ const AccountStack = createStackNavigator({
   [routes.NAVIGATION_ADDRESS_SCREEN_PATH]: AddressScreen,
   [routes.NAVIGATION_INVOICE_SCREEN_PATH]: Invoice,
 }, {
-  navigationOptions: defaultHeader,
+  navigationOptions: {header:null},
 });
 
 const OfferStack = createStackNavigator({
@@ -96,26 +91,34 @@ const OfferStack = createStackNavigator({
 
 const StoreStack = createStackNavigator({
   [routes.NAVIGATION_STORE_PATH]: StoreScreen,
-}, {navigationOptions: defaultHeader});
+}, {navigationOptions: {header:null}});
 
-const InfoStack = createStackNavigator({
-  [routes.NAVIGATION_INFO_SCREEN_PATH]: InfoScreen,
-  //  [routes.NAVIGATION_ACCOUNT_STACK_PATH]: AccountStack,
-  [routes.NAVIGATION_AUTH_STACK_PATH]: AccountSwitch,
-  // [routes.NAVIGATION_AUTH_LOADING_SWITCH]: AuthLoading,
-}, {
-  initialRouteName: routes.NAVIGATION_INFO_SCREEN_PATH,
-  navigationOptions: defaultHeader});
-
-
+const InvoiceStack = createStackNavigator({
+  [routes.NAVIGATION_INVOICE_SCREEN_PATH]: Invoice,
+}, {navigationOptions: {header:null}});
 
 const AccountSwitch = createSwitchNavigator({
   [routes.NAVIGATION_AUTH_LOADING_SWITCH]: AuthLoading,
   [routes.NAVIGATION_LOGIN_STACK_PATH]: AuthStack,
-  [routes.NAVIGATION_AUTH_STACK_PATH]: Account,
+  [routes.NAVIGATION_AUTH_STACK_PATH]: AccountStack,
 
   
-});
+}, {navigationOptions: {header:null}}
+
+);
+
+const InfoStack = createStackNavigator({
+  [routes.NAVIGATION_INFO_SCREEN_PATH]: InfoScreen,
+  //  [routes.NAVIGATION_ACCOUNT_STACK_PATH]: AccountStack,
+  [routes.NAVIGATION_AUTH_LOADING_SWITCH]: AccountSwitch,
+  // [routes.NAVIGATION_AUTH_LOADING_SWITCH]: AuthLoading,
+}, {
+  initialRouteName: routes.NAVIGATION_INFO_SCREEN_PATH,
+  navigationOptions: {header:null}});
+
+
+
+
 
 const SearchStack = createStackNavigator({
   [routes.NAVIGATION_SEARCH_SCREEN_PATH]: SearchScreen,
@@ -148,7 +151,7 @@ const MainAppNavigator = createBottomTabNavigator(
       }),
     },
     [routes.NAVIGATION_INVOICE_SCREEN_PATH]: {
-      screen: Invoice,
+      screen: InvoiceStack,
       navigationOptions: () => ({
         tabBarLabel:'Invoices', 
         tabBarIcon: ({ tintColor }) => <Icon name="md-list" type="ionicon" color={tintColor} />,
@@ -211,7 +214,7 @@ const Nav = createStackNavigator({
     navigationOptions: { header: null },
   },
   // [routes.NAVIGATION_AUTH_STACK_PATH]:{ screen:AccountSwitch,  navigationOptions: { header: null },},
-  [routes.NAVIGATION_CHECKOUT_PATH]: Checkout,
+  // [routes.NAVIGATION_CHECKOUT_PATH]: Checkout,
 }, {
   headerBackTitleVisible: false,
 });

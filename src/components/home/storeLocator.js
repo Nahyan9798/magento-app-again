@@ -8,6 +8,9 @@ import { NAVIGATION_STORE_PATH } from '../../navigation/routes';
 
 
 class StoreLocator extends Component {
+
+  static navigationOptions = ({ navigation }) => ({header:null});
+
     LoadingIndicatorView() {
         return (
           <ActivityIndicator

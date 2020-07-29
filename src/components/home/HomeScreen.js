@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {  Image,
-  ScrollView, View, StyleSheet, TouchableOpacity, RefreshControl,StatusBar,
+  ScrollView, View, StyleSheet, TouchableOpacity, RefreshControl, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { MaterialHeaderButtons, Button, Text, Item } from '../common';
-import { NAVIGATION_HOME_PRODUCT_PATH, NAVIGATION_STORE_PATH, NAVIGATION_AUTH_LOADING_SWITCH, NAVIGATION_ACCOUNT_STACK_PATH} from '../../navigation/routes';
+import AsyncStorage from '@react-native-community/async-storage';
+import { MaterialHeaderButtons, Button, Input, Text, Item } from '../common';
+import { NAVIGATION_LOGIN_STACK_PATH, NAVIGATION_STORE_PATH, NAVIGATION_AUTH_LOADING_SWITCH, NAVIGATION_ACCOUNT_STACK_PATH, NAVIGATION_HOME_STACK_PATH} from '../../navigation/routes';
 import { NAVIGATION_CONTACT_PATH,NAVIGATION_AUTH_STACK_PATH,NAVIGATION_LOGIN_PATH } from '../../navigation/routes';
 import { NAVIGATION_ACCOUNT_PATH } from '../../navigation/routes';
 import { getHomeData, setCurrentProduct } from '../../actions';
@@ -17,10 +18,29 @@ import NavigationService from '../../navigation/NavigationService';
 import { ThemeContext, theme } from '../../theme';
 import { translate } from '../../i18n';
 import Modal from 'react-native-modal';
+import { magento } from '../../magento';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ContactScreen from './contactScreen';
+import { auth } from '../../actions/CustomerAuthActions';
+
+
 
 class HomeScreen extends Component {
+  constructor(props) {
+    super(props);
+  this.state = {
+    isModalVisible:false,
+    email: null,
+    password : null,
+    };
+    this.setEmail = this.setEmail.bind(this);
+    this.setPassword = this.setPassword.bind(this);
+
+  
+  }
+
+   
+
   static contextType = ThemeContext;
 
   static navigationOptions = ({ navigation }) => ({
@@ -46,20 +66,42 @@ class HomeScreen extends Component {
       // </MaterialHeaderButtons>
     ),
     headerRight: ( 
-      <TouchableOpacity onPress={() => navigation.navigate(NAVIGATION_AUTH_STACK_PATH)}>
+      <TouchableOpacity onPress={() => navigation.navigate(NAVIGATION_AUTH_LOADING_SWITCH)}>
       <Icon name="user-alt" size={20} style={{alignSelf:"flex-start", marginRight:10,color:theme.colors.primaryDark}}> </Icon>
    </TouchableOpacity>
    
     ),
   });
 
-  componentDidMount() {
+  
+    
+    
+  
+
+
+  async componentDidMount() {
     const { navigation } = this.props;
-   // if (this.props.slider.length === 0) {
+    const customerToken = await AsyncStorage.getItem('customerToken');
+    magento.setCustomerToken(customerToken);
+    // if(!customerToken){
+    //   this.openModal();
+    
+    //   }
+    //   navigation.navigate(NAVIGATION_HOME_STACK_PATH)
+    
+  
+
+    navigation.navigate(
+      customerToken
+        ? NAVIGATION_HOME_STACK_PATH
+        : NAVIGATION_LOGIN_STACK_PATH,
+    );
+      
+  };  
       //this.props.getHomeData();
     //}
    // navigation.setParams({ toggleDrawer: this.toggleDrawer });
-  }
+
 
   // toggleDrawer = () => {
     // const { navigation } = this.props;
@@ -72,6 +114,48 @@ class HomeScreen extends Component {
   //     title: product.name,
   //   });
   // };
+  onLoginPress = () => {
+    auth(this.state.email, this.state.password);
+   
+  };
+
+  onSigninPress = () => {
+    navigation.navigate(NAVIGATION_SIGNIN_PATH);
+  };
+
+
+  renderButtons = () => {
+    return (
+      <View>
+        <Button
+          disabled={this.state.email === '' || this.state.password === ''}
+          onPress={this.onLoginPress}
+        >
+          {translate('login.loginButton')}
+        </Button>
+        <Button
+          onPress={this.onSigninPress}
+          style={styles.buttonMargin(theme)}
+        >
+          {translate('login.signupButton')}
+        </Button>
+        </View>
+    )
+  };
+
+  openModal = () =>{
+    this.setState({
+    isModalVisible:true
+    })
+    }
+
+    closeModal = () =>{
+      this.setState({
+      isModalVisible:false
+      })
+      }
+
+
   openContactScreen() {
     NavigationService.navigate(NAVIGATION_CONTACT_PATH, {title : "Contact Us"});
     <ContactScreen link="https://dev03-totaltools.balancenet.com.au/contact" />
@@ -83,8 +167,13 @@ class HomeScreen extends Component {
    openAccount() {
     NavigationService.navigate(NAVIGATION_ACCOUNT_STACK_PATH);
   };
-   
 
+   setEmail(inputdata) {
+     this.setState({email: inputdata})
+   };
+   setPassword(inputData) {
+    this.setState({password: inputData})
+  };
 
   onRefresh = () => {
     this.props.getHomeData(true);
@@ -113,9 +202,47 @@ class HomeScreen extends Component {
         </View>
       );
     }
-
+   
     return ( <>
-      {/* <StatusBar barStyle = "dark-content" hidden = {false} backgroundColor = "#8B0000" translucent = {true}/> */}
+      <Modal animationIn="slideInUp" animationOut="slideOutDown" onBackdropPress={()=>this.closeModal()} isVisible={this.state.isModalVisible} style={{backgroundColor:'white',maxHeight:theme.dimens.WINDOW_HEIGHT/ 3, flexDirection:'column', alignSelf:'center'}}>
+      <View style={{ flex: 1,justifyContent:'center'}}>
+      <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      style={styles.container(theme)}
+    >
+      <Input
+        autoCapitalize="none"
+        underlineColorAndroid="transparent"
+        placeholder='Email'
+        keyboardType="email-address"
+        returnKeyType="next"
+        autoCorrect={false}
+        value={this.state.email}
+        editable={true}
+        onChangeText={this.setEmail}
+        onSubmitEditing={() => passwordInput.current.focus()}
+        containerStyle={styles.inputContainer(theme)}
+        textContentType="emailAddress"
+      />
+      <Input
+        autoCapitalize="none"
+        underlineColorAndroid="transparent"
+        secureTextEntry
+        placeholder='Password'
+        autoCorrect={false}
+        value={this.state.password}
+        editable={true}
+        onChangeText={this.setPassword}
+        onSubmitEditing={this.onLoginPress}
+        // assignRef={(input) => { passwordInput.current = input; }}
+        containerStyle={styles.inputContainer(theme)}
+        textContentType="password"
+      />
+      {this.renderButtons()}
+      </KeyboardAvoidingView>
+          </View>
+      </Modal>
+
       <ScrollView
         style={styles.container(theme)}
         refreshControl={(
@@ -346,6 +473,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  inputContainer: theme => ({
+    width: theme.dimens.WINDOW_WIDTH * 0.7,
+    marginBottom: theme.spacing.large,
+  }),
   canvas: {
     flex:1,
     position:'relative',
@@ -356,6 +487,9 @@ const styles = StyleSheet.create({
     margin:0,
     padding : 0,
   },
+  buttonMargin: theme => ({
+    marginTop: theme.spacing.large,
+  }),
   shopimage: {
     flex:1,
     position:'relative',

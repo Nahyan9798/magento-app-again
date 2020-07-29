@@ -23,7 +23,6 @@ export const NAVIGATION_CONTACT_PATH = "Contact";
 export const NAVIGATION_STORE_PATH= "Store";
 export const NAVIGATION_OFFER_SCREEN_PATH="Offers";
 export const NAVIGATION_INFO_SCREEN_PATH="Info";
-
 export const NAVIGATION_DRAWER_SCREEN = 'Drawer_Screen';
 export const NAVIGATION_FILTER_DRAWER_SCREEN = 'NAVIGATION_FILTER_DRAWER_SCREEN';
 export const BOTTOM_TAB_NAVIGATOR = 'Bottom_Tab_Navigator';

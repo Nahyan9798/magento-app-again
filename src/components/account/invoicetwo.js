@@ -1,88 +1,5 @@
-// import React, { useEffect, useContext } from 'react';
-// import {
-//   View,
-//   StyleSheet,
-//   TouchableOpacity,
-// } from 'react-native';
-// import PropTypes from 'prop-types';
-// import { Text, Price } from '../common'; 
-// import { orderProductDetail } from '../../actions';
-// import { NAVIGATION_INVOICE_SCREEN_PATH } from '../../navigation/routes';
-// import NavigationService from '../../navigation/NavigationService';
-// import { ThemeContext } from '../../theme';
-// import { translate } from '../../i18n';
 
-// const InvoiceScreen = ({
-//   products,
-//   navigation,
-//   orderProductDetail: _orderProductDetail,
-//     item,
-//   }) => {
-//     const theme = useContext(ThemeContext);
-//     // useEffect(() => {
-//     //   navigation.state.params.item.items.forEach((item) => {
-//     //     if (!(item.sku in products)) {
-//     //       _orderProductDetail(item.sku);
-//     //     }
-//     //   });
-//     // },
-//    //  []);
-//     // const openInvoiceScreen = () => {
-//     //     NavigationService.navigate(NAVIGATION_INVOICE_SCREEN_PATH, {
-//     //       item,
-//     //     });
-//     //   };
-//     console.log("you are in invoice tab")
-//       return (
-        
-//           <View style={styles.container(theme)}>
-//             <Text type="label">This will be the invoice page</Text>
-//             {/* <Text bold>{`${translate('common.order')} # ${item.increment_id}`}</Text>
-//             <Text type="label">{`${translate('orderListItem.created')}: ${item.created_at}`}</Text>
-//             <Text type="label">
-//               {`${translate('orderListItem.shipTo')} ${item.customer_firstname} ${item.customer_lastname}`}
-//             </Text>
-//             <View style={styles.row}>
-//               <Text type="label">
-//                 {`${translate('orderListItem.orderTotal')}: `}
-//               </Text>
-//               <Price
-//                 basePrice={item.grand_total}
-//                 currencySymbol={currencySymbol}
-//                 currencyRate={1}
-//               />
-//             </View> */}
-//             {/* <Text type="label">{`${translate('orderListItem.status')}: ${item.status}`}</Text> */}
-//           </View>
-       
-//       );
-//     };
-
-//     const styles = StyleSheet.create({
-//         container: theme => ({
-//           backgroundColor: theme.colors.surface,
-//           borderRadius: theme.dimens.borderRadius,
-//           marginTop: theme.spacing.small,
-//           padding: theme.spacing.small,
-//           borderBottomWidth: 1,
-//           borderColor: theme.colors.border,
-//           flex: 1,
-//         }),
-//         row: {
-//           flexDirection: 'row',
-//         },
-//       });
-      
-//       InvoiceScreen.propTypes = {
-//         item: PropTypes.object.isRequired,
-//       };
-      
-//       InvoiceScreen.defaultProps = {};
-      
-//       export default InvoiceScreen;
-
-
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import {
@@ -97,84 +14,124 @@ import {
 } from '../../actions';
 import { Text } from '../common';
 import OrderListItem from './OrderListItem';
-import { ThemeContext } from '../../theme';
+import { ThemeContext, theme  } from '../../theme';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
 import { translate } from '../../i18n';
 
 import { NAVIGATION_HOME_SCREEN_PATH } from '../../navigation/routes';
+import { ScrollView } from 'react-native-gesture-handler';
 
-const InvoiceScreen = ({
-  orders,
-  customerId,
-  refreshing,
-  getOrdersForCustomer: _getOrdersForCustomer,
-  navigation,
-}) => {
+const InvoiceScreen = ({ account,}) => {
   const theme = useContext(ThemeContext);
-
   useEffect(() => {
-    _getOrdersForCustomer(customerId);
+    // ComponentDidMount
+      getInsiderData();
+
   }, []);
+  const [data, setdata] = useState([]);
+ 
 
-  const onRefresh = () => {
-    _getOrdersForCustomer(customerId, true);
-  };
+  const customer = account.customer;
+  const loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id")
 
-  const renderItem = orderItem => (
-    <OrderListItem
-      item={orderItem.item}
-    />
-  );
+  const getInsiderData = async () =>{
+     const loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id");
+          console.log("loyalty id for insider data" + loyaltyid.value)
+        const response = await fetch('https://totaltools-xi-test-03.prontohosted.com.au/pronto/rest/internalUAT/api/GetMemberTransactions', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': "application/json",
+      'x-pronto-token': "balance:*:7fc966b1e11433d976c9b43c2eac2b7de13b8946f7c210352fcad59ea34ecc3427a71b3f800e36cf5990075027d0944face261d39460413582754e3b5198e045:251c5834f45d130da550a15695dc075db19fd0d30be4a0b9",
+    },
+    body: `<?xml version="1.0"?><GetMemberRequest><Parameters><LoyaltyID>${loyaltyid.value}</LoyaltyID></Parameters></GetMemberRequest>`,
+  });
+  const responseText = await response.text();
+  // console.log(responseText);
+  // setdata(responseText);
+  // console.log(responseText);
+  var XMLParser = require('react-xml-parser');
+ 
+  var xml = new XMLParser().parseFromString(responseText);
+  console.log(xml)
+  let invoice = xml.getElementsByTagName("TransactionHeader");
+  let inv = xml.getElementsByTagName('InvoiceNumber');
+    // inv.map((item)=> {
+    //   console.log(item.value);
 
-  const renderOrderList = () => {
-    const data = orders.sort((b, a) => moment(a.created_at).diff(b.created_at));
+    // })
+  setdata(data => [...data, inv]);
+  
+  
+  data.map((item)=> {
+    
+      console.log(item.value);
 
-    return (
-      <FlatList
-        refreshControl={(
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-)}
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-      />
-    );
-  };
+    
 
-  const renderEmptyOrderList = () => {
-    const { navigate } = navigation;
-    return (
-      <View style={styles.emptyListContainerStyle(theme)}>
-        <Text type="heading" style={styles.textStyle(theme)}>
-          {translate('No Orders yet!')}
-        </Text>
-        <TouchableOpacity
-          onPress={() => navigate(NAVIGATION_HOME_SCREEN_PATH)}
-        >
-          <Text type="heading" bold style={styles.buttonTextStyle(theme)}>
-            {translate('common.continueShopping')}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  })
+ 
+  //console.log(data);
+  let ord = xml.getElementsByTagName('OrderNo');
+  // let lt = array.map((item) => {
+  //     console.log(item.value);
+    
+  //   });
+    // console.log(item.value);
+  
+  
+  
+ // console.log(invoice);
+  // 
+  
 
-  if (orders && orders.length) {
-    return (
-      <View style={styles.container(theme)}>
-        {renderOrderList()}
-      </View>
-    );
-  }
-  return renderEmptyOrderList();
-};
 
-InvoiceScreen.navigationOptions = () => ({
-  title: "Invoices",
-  headerBackTitle: '',
-});
+  
+ 
+}
+
+// const renderdata =() => {
+
+// const Invoicenumbers = data.map((item)=> {
+//   return (
+//     <View>
+
+//   <Text>{item}</Text>
+//     </View>
+//   );
+// })
+
+// }
+
+const getinvnumbers= () => {
+    data.map((item)=>{
+    <Text>{item.value}</Text>
+    });
+  
+    
+}
+
+  //   return (item.InvoiceNumber);
+  // });
+  // console.log(Invoicenumbers);
+// console.log('this is xml data'+ data);
+return (
+  <View >
+    {data.map((item)=>{
+    <Text style={{justifyContent:'center', flex:1, fontSize:22}}>{item.value}</Text>
+    })}
+    <Text>
+    
+      abc
+    </Text>
+  </View>
+);
+
+
+}
+
+  
 
 const styles = {
   container: theme => ({
@@ -197,29 +154,12 @@ const styles = {
   }),
 };
 
-InvoiceScreen.propTypes = {
-  orders: PropTypes.arrayOf(PropTypes.object),
-  customerId: PropTypes.number,
-  refreshing: PropTypes.bool,
-  getOrdersForCustomer: PropTypes.func.isRequired,
-  navigation: PropTypes.object.isRequired,
-};
 
-InvoiceScreen.defaultProps = {
-  orders: null,
-  customerId: null,
-};
-
-const mapStateToProps = ({ account, magento }) => {
-  const customerId = account.customer ? account.customer.id : null;
-  const orders = account.orderData ? account.orderData.items : [];
+const mapStateToProps = (state) => {
+  const accountData = state.account;
   return {
-    customerId,
-    orders,
-    refreshing: account.refreshing,
-  };
+    account: accountData
+  }
 };
 
-export default connect(mapStateToProps, {
-  getOrdersForCustomer,
-})(InvoiceScreen);
+export default connect(mapStateToProps)(InvoiceScreen);

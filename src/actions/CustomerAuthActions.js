@@ -16,7 +16,7 @@ import {
 } from './types';
 import NavigationService from '../navigation/NavigationService';
 import {
-  NAVIGATION_ACCOUNT_STACK_PATH,
+  NAVIGATION_ACCOUNT_PATH,
   NAVIGATION_LOGIN_STACK_PATH,
 } from '../navigation/routes';
 import { logError } from '../helper/logger';
@@ -71,7 +71,7 @@ const authSuccess = async (dispatch, token) => {
   try {
     await AsyncStorage.setItem('customerToken', token);
     dispatch({ type: MAGENTO_AUTH_LOADING, payload: false });
-    NavigationService.navigate(NAVIGATION_ACCOUNT_STACK_PATH);
+    NavigationService.navigate(NAVIGATION_ACCOUNT_PATH);
   } catch (e) {
     logError(e);
     authFail(dispatch, 'Something went wrong. Pleas try again later.');
