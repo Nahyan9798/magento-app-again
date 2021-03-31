@@ -65,6 +65,9 @@ target 'magento_mobile_app' do
   add_flipper_pods!
 
 
+
+  pod 'RNShare', :path => '../node_modules/react-native-share'
+
   post_install do |installer|
     flipper_post_install(installer)
   end

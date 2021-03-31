@@ -6,8 +6,10 @@ import {  Image,
 import { NAVIGATION_CONTACT_PATH } from '../../navigation/routes';
 
 
-
 class ContactScreen extends Component {
+
+static navigationOptions = ({ navigation }) => ({header:null});
+
   LoadingIndicatorView() {
     return (
       <ActivityIndicator
@@ -22,7 +24,7 @@ class ContactScreen extends Component {
   }
   render() {
     return (
-    <WebView source={{ uri: this.props.link }} 
+    <WebView source={{ uri: 'https://dev03-totaltools.balancenet.com.au/' }} 
     style={{ flex: 1 }}
     renderLoading={this.LoadingIndicatorView}
         startInLoadingState={true}

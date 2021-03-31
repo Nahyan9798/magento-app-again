@@ -5,7 +5,7 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
-  TouchableOpacity, Image,
+  TouchableOpacity, Image, SegmentedControlIOSBase,
 } from 'react-native';
 import PropTypes, { element } from 'prop-types';
 import { Button, Text } from '../common';
@@ -40,13 +40,16 @@ const Account = ({
  const [spendtoretain, setspendtoretain]= useState();
  const [spendtonext, setspendtonext]= useState();
  const [email, setemail] = useState();
+ const [dob , setdob] = useState();
+ const [address, setaddress] = useState();
+ const [city, setcity] = useState();
+
 
 
   const theme = useContext(ThemeContext);
 
   useEffect(() => {
     // ComponentDidMount
-    
     if (!customer) {
       _currentCustomer();
     }
@@ -57,68 +60,14 @@ const Account = ({
   }, []);
   
   
-      const getInsiderData = async () =>{
-    const loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id");
-          console.log(loyaltyid.value)
-        const response = await fetch('https://totaltools-xi-test-03.prontohosted.com.au/pronto/rest/internalUAT/api/GetMember', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': "application/json",
-      'x-pronto-token': "balance:*:7fc966b1e11433d976c9b43c2eac2b7de13b8946f7c210352fcad59ea34ecc3427a71b3f800e36cf5990075027d0944face261d39460413582754e3b5198e045:251c5834f45d130da550a15695dc075db19fd0d30be4a0b9",
-    },
-    body: `<?xml version="1.0"?><GetMemberRequest><Parameters><LoyaltyID>${loyaltyid.value}</LoyaltyID></Parameters></GetMemberRequest>`,
-  });
-  const responseText = await response.text();
-  var XMLParser = require('react-xml-parser');
-  var xml = new XMLParser().parseFromString(responseText);
 
-  //console.log(xml.getElementsByTagName('FirstName')[0].value);
-  //console.log(xml.getElementsByTagName('LastName')[0].value);
-  let fname = xml.getElementsByTagName('FirstName')[0].value
-  let lname = xml.getElementsByTagName('LastName')[0].value
-  let mobile = xml.getElementsByTagName('Mobile')[0].value
-  let email = xml.getElementsByTagName('EmailAddress')[0].value
-
-  let tier = xml.getElementsByTagName('Tier')[0].value
-  let insiderdollars = xml.getElementsByTagName('InsiderDollars')[0].value
-  let spendtoretain = xml.getElementsByTagName('SpendToRetain')[0].value
-  let spend = xml.getElementsByTagName('Spend')[0].value
-  let pointexpiry = xml.getElementsByTagName('PointExpiry')[0].value
-  let spendtonext = xml.getElementsByTagName('SpendToNextTier')[0].value
-  setdata(fname);
-  setlname(lname);
-  setemail(email);
-  setmobile(mobile);
-  settier(tier);
-  setspendtonext(spendtonext);
-  setinsiderdollar(insiderdollars);
-  setspendtoretain(spendtoretain);
-  setspend(spend);
-  setexpiry(pointexpiry);
-  }
  
 
-  // const renderData= () =>{
-  //   return (
-  //     <View>
-  //       <Text bold
-  //         type="subheading"
-  //         style={{textAlign:'center', fontSize:25}} >{data}</Text>
-  //         <Text bold
-  //         type="subheading"
-  //         style={{textAlign:'center', fontSize:25}} >{lname}</Text>
-         
-  //     </View>
-  //   // return data.map(element => {return (
-  //   //   
-  //   );
-  // }
 
   const onLogoutPress = () => {
-     navigation.navigate(NAVIGATION_LOGIN_STACK_PATH);
-    _logout();
    
+    _logout();
+      navigation.navigate(NAVIGATION_LOGIN_STACK_PATH);
   };
       
 
@@ -134,12 +83,12 @@ const Account = ({
       );
       
     }
+    {getInsiderData()};
     
-    const loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id")
-  const { email, firstname, lastname, dob,} = customer;
-    console.log("this is the line after which u need to pay attention")
-    console.log(customer)
-    console.log(loyaltyid.value)
+     const loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id")
+  const {email, firstname, lastname, dob,} = customer;
+   
+    // console.log(loyaltyid.value)
     
     return (
       <ScrollView>
@@ -161,7 +110,7 @@ const Account = ({
            padding:10}}>
           <Text style={{alignSelf:'center'}}> Your Insider Level: </Text>
           <Text style={{alignSelf:'center',fontSize:40, color:theme.colors.primaryDark,}}> {tier} </Text>
-          <Text style={{textAlign:"center" , fontSize:12 }}>Spend ${spendtonext} by 30 June 2020 to reach BRONZE </Text>
+          <Text style={{textAlign:"center" , fontSize:12 }}>Spend ${spendtonext} by 30 June 2020 to reach GOLD </Text>
 
 
           </View>
@@ -220,13 +169,9 @@ const Account = ({
           </TouchableOpacity>
           
           </View>
-        {/* <Text>{mobile}</Text> */}
-        {/* <Text style={styles.center}>{email}</Text> */}
-        {/* <Text style={styles.center}>{loyaltyid.value}</Text> */}
-        {/* <Text style={styles.center}>{dob}</Text> */}
       
       </View>
-      <Text style={{textAlign:'center',flex:1, fontSize:15, }}>Contact Information</Text>
+      <Text style={{textAlign:'center',flex:1, fontSize:15,marginTop:15 }}>Contact Information</Text>
       <View style= {{flex:1, borderTopWidth:1, borderBottomWidth:1, borderColor:'#ededed', padding:10}}>
       <Text style={{fontSize:10,}}>Email Address</Text>
             <Text style={{fontSize:20, color:'black'}}>{email}</Text
@@ -237,9 +182,69 @@ const Account = ({
             <Text style={{fontSize:20, color:'black'}}>{mobile}</Text>
 
       </View>
+
+      <Text style={{textAlign:'center',flex:1, fontSize:15,marginTop:15 }}>ACCOUNT INFORMATION</Text>
+      <View style= {{flex:1, borderBottomWidth:1, borderColor:'#ededed', padding:10}}>
+      <Text style={{fontSize:10,}}> Date of Birth</Text>
+            <Text style={{fontSize:20, color:'black'}}>{dob}</Text>
+
+
+      </View>
+      <Text style={{textAlign:'center',flex:1, fontSize:15, marginTop:15 }}>ADDRESS INFORMATION</Text>
+      <View style= {{flex:1, borderBottomWidth:1, borderColor:'#ededed', padding:10}}>
+      <Text style={{fontSize:10,}}> Address</Text>
+            <Text style={{fontSize:15, color:'black'}}>{address +', ' +city}</Text>
+
+
+      </View>
+
+
       </ScrollView>
     );
 };
+const getInsiderData = async () =>{
+         const loyaltyid = customer.custom_attributes.find(attribute => attribute.attribute_code == "loyalty_id");
+          // console.log(loyaltyid.value)
+        const response = await fetch('https://totaltools-xi-test-03.prontohosted.com.au/pronto/rest/internalUAT/api/GetMember', {
+              method: 'POST',
+                headers: {
+                Accept: 'application/json',
+                'Content-Type': "application/json",
+                'x-pronto-token': "balance:*:7fc966b1e11433d976c9b43c2eac2b7de13b8946f7c210352fcad59ea34ecc3427a71b3f800e36cf5990075027d0944face261d39460413582754e3b5198e045:251c5834f45d130da550a15695dc075db19fd0d30be4a0b9",
+              },
+              body: `<?xml version="1.0"?><GetMemberRequest><Parameters><LoyaltyID>${loyaltyid.value}</LoyaltyID></Parameters></GetMemberRequest>`,
+            });
+            const responseText = await response.text();
+            var XMLParser = require('react-xml-parser');
+            var xml = new XMLParser().parseFromString(responseText);
+                          let fname = xml.getElementsByTagName('FirstName')[0].value
+                          let lname = xml.getElementsByTagName('LastName')[0].value
+                          let mobile = xml.getElementsByTagName('Mobile')[0].value
+                          let email = xml.getElementsByTagName('EmailAddress')[0].value
+                          let dob = xml.getElementsByTagName('DOB')[0].value
+                          let address = xml.getElementsByTagName('Address1')[0].value
+                          let city = xml.getElementsByTagName('City')[0].value
+
+                          let tier = xml.getElementsByTagName('Tier')[0].value
+                          let insiderdollars = xml.getElementsByTagName('InsiderDollars')[0].value
+                          let spendtoretain = xml.getElementsByTagName('SpendToRetain')[0].value
+                          let spend = xml.getElementsByTagName('Spend')[0].value
+                          let pointexpiry = xml.getElementsByTagName('PointExpiry')[0].value
+                          let spendtonext = xml.getElementsByTagName('SpendToNextTier')[0].value
+                          setdata(fname);
+                          setlname(lname);
+                          setemail(email);
+                          setmobile(mobile);
+                          settier(tier);
+                          setspendtonext(spendtonext);
+                          setinsiderdollar(insiderdollars);
+                          setspendtoretain(spendtoretain);
+                          setspend(spend);
+                          setdob(dob);
+                          setexpiry(pointexpiry);
+                          setaddress(address);
+                          setcity(city);
+                          }
 
   const openOrders = () => {
     navigation.navigate(NAVIGATION_ORDERS_PATH);
@@ -256,23 +261,24 @@ const Account = ({
    
   
   return (
-    <View style={styles.container(theme)}>
-      {/* {renderData()} */}
-     {/* {renderInsiderData()} */}
-     {/* <InsiderData callback={this.insiderbasicInfo} callback={()=>this.callback} /> */}
-      {/* {insiderbasicInfo()} */}
+    <ScrollView>   
+      
+       <View style={styles.container(theme)}>
+      
       {renderCustomerData()}
-      <Button onPress={onLogoutPress}>
-        {translate('account.logoutButton')}
-      </Button>
-      <Button onPress={openOrders} style={styles.buttonMargin(theme)}>
+      <TouchableOpacity onPress={onLogoutPress}>
+        <Text style={{fontSize:20, color:theme.colors.primaryDark, margin:20}}>LogOut</Text>
+      </TouchableOpacity>
+      {/* <Button onPress={openOrders} style={styles.buttonMargin(theme)}>
         {translate('account.myOrdersButton')}
       </Button>
       <Button onPress={openAddAddress} style={styles.buttonMargin(theme)}>
         {translate('account.myAddressButton')}
       </Button>
-      <Button onPress={openInvoice} style={styles.buttonMargin(theme)}> My Invoices </Button>
+      <Button onPress={openInvoice} style={styles.buttonMargin(theme)}> My Invoices </Button> */}
     </View>
+    </ScrollView>
+
   );
 };
 

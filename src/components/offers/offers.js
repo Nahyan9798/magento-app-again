@@ -6,7 +6,7 @@ import {  Image,
 import { connect } from 'react-redux';
 import { MaterialHeaderButtons, Button, Text, Item } from '../common';
 import { NAVIGATION_HOME_PRODUCT_PATH, NAVIGATION_STORE_PATH} from '../../navigation/routes';
-import { NAVIGATION_CONTACT_PATH,NAVIGATION_AUTH_STACK_PATH } from '../../navigation/routes';
+import { NAVIGATION_CONTACT_PATH,NAVIGATION_AUTH_LOADING_SWITCH } from '../../navigation/routes';
 import { NAVIGATION_ACCOUNT_PATH } from '../../navigation/routes';
 import { ThemeContext, theme } from '../../theme';
 import NavigationService from '../../navigation/NavigationService';
@@ -33,7 +33,7 @@ class OfferScreen extends Component {
         // </MaterialHeaderButtons>
       ),
       headerRight: ( 
-        <TouchableOpacity onPress={() => navigation.navigate(NAVIGATION_AUTH_STACK_PATH)}>
+        <TouchableOpacity onPress={() => navigation.navigate(NAVIGATION_AUTH_LOADING_SWITCH)}>
         <Icon name="user-alt" size={20} style={{alignSelf:"flex-start", marginRight:10,color:theme.colors.primaryDark}}> </Icon>
      </TouchableOpacity>
      

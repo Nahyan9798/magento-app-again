@@ -5,7 +5,7 @@ import {  Image,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { MaterialHeaderButtons, Button, Text, Item } from '../common';
-import { NAVIGATION_HOME_PRODUCT_PATH, NAVIGATION_STORE_PATH} from '../../navigation/routes';
+import { NAVIGATION_HOME_PRODUCT_PATH, NAVIGATION_AUTH_LOADING_SWITCH} from '../../navigation/routes';
 import { NAVIGATION_CONTACT_PATH,NAVIGATION_AUTH_STACK_PATH } from '../../navigation/routes';
 import { NAVIGATION_ACCOUNT_PATH } from '../../navigation/routes';
 import { ThemeContext, theme } from '../../theme';
@@ -18,7 +18,7 @@ class InfoScreen extends Component {
     static navigationOptions = ({ navigation }) => ({
       
       headerTitle: (
-      <Text  type="heading" bold style={{marginLeft:theme.dimens.WINDOW_WIDTH*0.25, color:theme.colors.primaryDark,width:theme.dimens.WINDOW_WIDTH*0.7,}}>
+      <Text  type="heading" bold style={{color:theme.colors.primaryDark, paddingLeft:theme.dimens.WINDOW_WIDTH*0.3, alignSelf:'center'}}>
       INFO
         </Text>
         ),
@@ -36,7 +36,7 @@ class InfoScreen extends Component {
         // </MaterialHeaderButtons>
       ),
       headerRight: ( 
-        <TouchableOpacity onPress={() => navigation.navigate(NAVIGATION_AUTH_STACK_PATH)}>
+        <TouchableOpacity onPress={() => navigation.navigate(NAVIGATION_AUTH_LOADING_SWITCH)}>
         <Icon name="user-alt" size={20} style={{alignSelf:"flex-start", marginRight:10,color:theme.colors.primaryDark}}> </Icon>
      </TouchableOpacity>
      
@@ -63,7 +63,7 @@ class InfoScreen extends Component {
             
           <Image resizeMode="cover" 
         style={styles.canvas}
-         source={require('../../assets/insurance.jpeg')}/>
+         source={require('../../assets/info.jpeg')}/>
       
            <View style={{
              flex:6,

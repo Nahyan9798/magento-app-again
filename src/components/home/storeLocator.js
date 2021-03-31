@@ -26,7 +26,7 @@ class StoreLocator extends Component {
   render() {
     return (
     <WebView source={{ uri: 'https://dev03-totaltools.balancenet.com.au/storelocator/' }} 
-    style={{ marginTop: 2, flex: 1 }} 
+    style={{  flex: 1 }} 
     renderLoading={this.LoadingIndicatorView}
         startInLoadingState={true}
         />

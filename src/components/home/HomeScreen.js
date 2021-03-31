@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {  Image,
-  ScrollView, View, StyleSheet, TouchableOpacity, RefreshControl, KeyboardAvoidingView,
-} from 'react-native';
+import {  Image,ScrollView, View, StyleSheet, TouchableOpacity, RefreshControl, KeyboardAvoidingView,} from 'react-native';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import AsyncStorage from '@react-native-community/async-storage';
 import { MaterialHeaderButtons, Button, Input, Text, Item } from '../common';
-import { NAVIGATION_LOGIN_STACK_PATH, NAVIGATION_STORE_PATH, NAVIGATION_AUTH_LOADING_SWITCH, NAVIGATION_ACCOUNT_STACK_PATH, NAVIGATION_HOME_STACK_PATH} from '../../navigation/routes';
+import { NAVIGATION_LOGIN_STACK_PATH, NAVIGATION_STORE_PATH, NAVIGATION_AUTH_LOADING_SWITCH, NAVIGATION_INVOICE_SCREEN_PATH, NAVIGATION_HOME_STACK_PATH} from '../../navigation/routes';
 import { NAVIGATION_CONTACT_PATH,NAVIGATION_AUTH_STACK_PATH,NAVIGATION_LOGIN_PATH } from '../../navigation/routes';
 import { NAVIGATION_ACCOUNT_PATH } from '../../navigation/routes';
 import { getHomeData, setCurrentProduct } from '../../actions';
@@ -19,6 +17,7 @@ import { ThemeContext, theme } from '../../theme';
 import { translate } from '../../i18n';
 import Modal from 'react-native-modal';
 import { magento } from '../../magento';
+import Share from "react-native-share";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ContactScreen from './contactScreen';
 import { auth } from '../../actions/CustomerAuthActions';
@@ -30,8 +29,8 @@ class HomeScreen extends Component {
     super(props);
   this.state = {
     isModalVisible:false,
-    email: null,
-    password : null,
+    email: '',
+    password : '',
     };
     this.setEmail = this.setEmail.bind(this);
     this.setPassword = this.setPassword.bind(this);
@@ -47,7 +46,7 @@ class HomeScreen extends Component {
     
 
     headerTitle: (<Image resizeMode="contain" 
-    style={{width:theme.dimens.WINDOW_WIDTH*0.8, height:55, resizeMode:'contain', alignSelf: 'center'
+    style={{width:theme.dimens.WINDOW_WIDTH*0.75, height:55, resizeMode:'contain', alignSelf: 'center'
     }}
      source={require('../../assets/download-(2).jpeg')}/>),
      
@@ -83,19 +82,19 @@ class HomeScreen extends Component {
     const { navigation } = this.props;
     const customerToken = await AsyncStorage.getItem('customerToken');
     magento.setCustomerToken(customerToken);
-    // if(!customerToken){
-    //   this.openModal();
+    if(!customerToken){
+      this.openModal();
     
-    //   }
-    //   navigation.navigate(NAVIGATION_HOME_STACK_PATH)
+      }
+      navigation.navigate(NAVIGATION_HOME_STACK_PATH)
     
   
 
-    navigation.navigate(
-      customerToken
-        ? NAVIGATION_HOME_STACK_PATH
-        : NAVIGATION_LOGIN_STACK_PATH,
-    );
+    // navigation.navigate(
+    //   customerToken
+    //     ? NAVIGATION_HOME_STACK_PATH
+    //     : NAVIGATION_LOGIN_STACK_PATH,
+    // );
       
   };  
       //this.props.getHomeData();
@@ -115,7 +114,7 @@ class HomeScreen extends Component {
   //   });
   // };
   onLoginPress = () => {
-    auth(this.state.email, this.state.password);
+    this.props.auth(this.state.email, this.state.password);
    
   };
 
@@ -160,12 +159,18 @@ class HomeScreen extends Component {
     NavigationService.navigate(NAVIGATION_CONTACT_PATH, {title : "Contact Us"});
     <ContactScreen link="https://dev03-totaltools.balancenet.com.au/contact" />
   };
+  openShops(){
+    NavigationService.navigate(NAVIGATION_CONTACT_PATH, {title : "Contact Us"});
+
+    <ContactScreen link="https://dev03-totaltools.balancenet.com.au/" />
+
+  };
   openStoreScreen() {
     NavigationService.navigate(NAVIGATION_STORE_PATH, {title : "Store Locator"});
   };
 
-   openAccount() {
-    NavigationService.navigate(NAVIGATION_ACCOUNT_STACK_PATH);
+   openInvoices() {
+    NavigationService.navigate(NAVIGATION_INVOICE_SCREEN_PATH);
   };
 
    setEmail(inputdata) {
@@ -191,6 +196,15 @@ class HomeScreen extends Component {
   //     />
   //   ));
   // }
+
+  shareOptions ={
+        title: 'Share via',
+        url: 'https://dev03-totaltools.balancenet.com.au/contact',
+      };
+    
+        fun = async () => {
+          const shareResponse = await Share.open(this.shareOptions);
+        };
  
   render() {
     const theme = this.context;
@@ -204,8 +218,9 @@ class HomeScreen extends Component {
     }
    
     return ( <>
-      <Modal animationIn="slideInUp" animationOut="slideOutDown" onBackdropPress={()=>this.closeModal()} isVisible={this.state.isModalVisible} style={{backgroundColor:'white',maxHeight:theme.dimens.WINDOW_HEIGHT/ 3, flexDirection:'column', alignSelf:'center'}}>
-      <View style={{ flex: 1,justifyContent:'center'}}>
+      <Modal animationIn="slideInUp" animationOut="slideOutDown" onBackdropPress={()=>this.closeModal()} isVisible={this.state.isModalVisible} style={{backgroundColor:'white',maxHeight:theme.dimens.WINDOW_HEIGHT/ 2, flexDirection:'column', alignSelf:'center'}}>
+      <View style={{ flex: 1,justifyContent:'center', padding:10, paddingTop:70}}>
+      
       <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : null}
       style={styles.container(theme)}
@@ -245,22 +260,26 @@ class HomeScreen extends Component {
 
       <ScrollView
         style={styles.container(theme)}
-        refreshControl={(
-          <RefreshControl
-            refreshing={this.props.refreshing}
-            onRefresh={this.onRefresh}
-          />
-          )}
+        // refreshControl={(
+        //   <RefreshControl
+        //     refreshing={this.props.refreshing}
+        //     onRefresh={this.onRefresh}
+        //   />
+        //   )}
       >
-        <TouchableOpacity onPress={this.openAccount}>        
+        <TouchableOpacity onPress={this.openInvoices}>        
            <Image resizeMode="cover" 
     style={styles.canvas}
      source={require('../../assets/insiderimage.jpeg')}/>
       </TouchableOpacity>
 
+
+      <TouchableOpacity onPress={this.fun}> 
       <Image resizeMode="cover" 
     style={styles.shopimage}
      source={require('../../assets/shopimage1.jpeg')}/>
+     </TouchableOpacity>
+
     <Image resizeMode="cover" 
       style={styles.canvas}
         source={require('../../assets/insurance.jpeg')}/>
@@ -269,7 +288,7 @@ class HomeScreen extends Component {
           style={styles.canvas}
             source={require('../../assets/openpay.jpeg')}/>
      
-       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, }}>
+       <Text type="heading" bold style={{color:'black',fontSize: 22, alignSelf:'center', width: theme.dimens.WINDOW_WIDTH*0.8, margin:5}}>
          Whats New at Total Tools
        </Text>
 
@@ -278,7 +297,8 @@ class HomeScreen extends Component {
          flexDirection: "row",
        justifyContent: 'space-around',
        alignItems: 'flex-start',
-       paddingHorizontal:2 ,
+       paddingHorizontal:20 ,
+       margin:5
            
             }}>
        <Icon name="comment-alt" backgroundColor="black" color="black" size={20} style={{flex:0.5, marginLeft:9}}></Icon>
@@ -287,11 +307,11 @@ class HomeScreen extends Component {
        TOOLS NEWS & INFORMATION
 
        </Text>
-       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{flex:1, marginLeft:9}}></Icon>
+       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{ marginLeft:9}}></Icon>
 
        </View>
 
-       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, }}>
+       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8,margin:5 }}>
          Specials
        </Text>
 
@@ -301,7 +321,7 @@ class HomeScreen extends Component {
         justifyContent: 'space-around',
         alignItems: 'flex-start',
         paddingHorizontal:2 ,
-           
+        margin:5
             }}>
        <Icon name="shopping-cart" backgroundColor="black" color="black" size={20} style={{flex:0.5, marginLeft:9}}></Icon>
        
@@ -309,11 +329,11 @@ class HomeScreen extends Component {
        BONUS/ REDEMPTION OFFERS
 
        </Text>
-       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{flex:1, marginLeft:9}} ></Icon>
+       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{ marginLeft:9}} ></Icon>
 
        </View>
 
-       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, }}>
+       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8,margin:5 }}>
          ZipPay Now Available!
        </Text>
 
@@ -323,7 +343,7 @@ class HomeScreen extends Component {
         justifyContent: 'space-around',
         alignItems: 'flex-start',
         paddingHorizontal:2 ,
-           
+        margin:5
             }}>
         <Icon name="info-circle" backgroundColor="black" color="black" size={20} style={{flex:0.5, marginLeft:9}}></Icon>
        
@@ -331,10 +351,10 @@ class HomeScreen extends Component {
        Learn More! 
 
        </Text>
-       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{flex:1, marginLeft:9}}></Icon>
+       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{marginLeft:9}}></Icon>
 
        </View>
-       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, }}>
+       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, margin:5}}>
          IMAR Insurance
        </Text>
 
@@ -344,7 +364,7 @@ class HomeScreen extends Component {
           justifyContent: 'space-around',
           alignItems: 'flex-start',
           paddingHorizontal:2 ,
-           
+          margin:5
             }}>
        <Icon name="info-circle" backgroundColor="black" color="black" size={20} style={{flex:0.5, marginLeft:9}}></Icon>
        
@@ -352,10 +372,10 @@ class HomeScreen extends Component {
        Learn More! 
 
        </Text>
-       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{flex:1 , marginLeft:9}}></Icon>
+       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{marginLeft:9}}></Icon>
 
        </View>
-       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, }}>
+       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, margin:5}}>
          Openpay
        </Text>
 
@@ -365,7 +385,7 @@ class HomeScreen extends Component {
        justifyContent: 'space-around',
        alignItems: 'flex-start',
        paddingHorizontal:2,
-           
+       margin:5
             }}>
        <Icon name="info-circle" backgroundColor="black" color="black" size={20} style={{flex:0.5, marginLeft:9}}></Icon>
        
@@ -373,10 +393,10 @@ class HomeScreen extends Component {
        Learn More! 
 
        </Text>
-       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{flex:1, marginLeft:9}}></Icon>
+       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{ marginLeft:9}}></Icon>
 
        </View>
-       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, }}>
+       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8,margin:5 }}>
          Mitsubishi Triton Offer
        </Text>
 
@@ -386,6 +406,7 @@ class HomeScreen extends Component {
        justifyContent: 'space-around',
        alignItems: 'flex-start',
        paddingHorizontal:2 ,
+       margin:5
             }}>
        <Icon name="info-circle" backgroundColor="black" color="black" size={20} style={{flex:0.5, marginLeft:9}}></Icon>
        
@@ -393,10 +414,10 @@ class HomeScreen extends Component {
        Learn More! 
 
        </Text>
-       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{flex:1, marginLeft:9}} ></Icon>
+       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{ marginLeft:9}} ></Icon>
 
        </View>
-       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, }}>
+       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, margin:5}}>
          Shop the Latest Products
        </Text>
 
@@ -406,7 +427,7 @@ class HomeScreen extends Component {
        justifyContent: 'space-around',
        alignItems: 'flex-start',
        paddingHorizontal:2 ,
-           
+       margin:5
             }}>
        <Icon name="info-circle" backgroundColor="black" color="black" size={20} style={{flex:0.5, marginLeft:9}}></Icon>
        
@@ -414,10 +435,10 @@ class HomeScreen extends Component {
        NEW TOOLS IN STOCK
 
        </Text>
-       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{flex:1, marginLeft:9}} ></Icon>
+       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{ marginLeft:9}} ></Icon>
 
        </View>
-       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, }}>
+       <Text type="heading" bold style={{color:'black',fontSize: 22, paddingHorizontal:15, width: theme.dimens.WINDOW_WIDTH*0.8, margin:5}}>
          Weather Forecast
        </Text>
 
@@ -427,7 +448,7 @@ class HomeScreen extends Component {
         justifyContent: 'space-around',
         alignItems: 'flex-start',
         paddingHorizontal:2,
-
+        margin:5
             }}>
        <Icon name="cloud" backgroundColor="black" color="black" size={20} style={{flex:0.5, marginLeft:9}}></Icon>
        
@@ -435,7 +456,7 @@ class HomeScreen extends Component {
        www.bom.gov.au
 
        </Text>
-       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{flex:1, marginLeft:9}} ></Icon>
+       <Icon name="chevron-right" backgroundColor="00FFFFFF" size={25} style={{ marginLeft:9}} ></Icon>
 
        </View>
        
@@ -523,6 +544,7 @@ HomeScreen.defaultProps = {
 
 const mapStateToProps = (state) => {
   const { refreshing } = state.home;
+  const {error, success, loading} = state.customerAuth;
   const {
     errorMessage,
     currency: {
@@ -536,7 +558,8 @@ const mapStateToProps = (state) => {
     errorMessage,
     currencySymbol,
     currencyRate,
+    error, success, loading
   };
 };
 
-export default connect(mapStateToProps, { getHomeData, setCurrentProduct })(HomeScreen);
+export default connect(mapStateToProps, { auth, setCurrentProduct })(HomeScreen);

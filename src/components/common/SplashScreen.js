@@ -19,7 +19,7 @@ const SplashScreen = () => {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.primaryDark,
+      backgroundColor: theme.colors.white,
 
     },
   };
